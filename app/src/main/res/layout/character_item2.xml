@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/backgroundGray">
+
+    <ImageView
+        android:id="@+id/character_image"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:paddingRight="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/character_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        style="@style/CharacterNameStyle"
+        app:layout_constraintStart_toEndOf="@id/character_image"
+        app:layout_constraintTop_toTopOf="@id/character_image"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:id="@+id/character_status_indicator"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_marginTop="7dp"
+        app:layout_constraintStart_toStartOf="@id/character_name"
+        app:layout_constraintTop_toBottomOf="@id/character_name"
+        app:layout_constrainedHeight="@id/character_status_and_species"
+        android:background="@drawable/status_alive" />
+
+
+    <TextView
+        android:id="@+id/character_status_and_species"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Status - Species"
+        android:layout_marginLeft="5dp"
+        style="@style/CharacterSubTextStyle"
+        app:layout_constraintStart_toEndOf="@id/character_status_indicator"
+        app:layout_constraintTop_toBottomOf="@id/character_name"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/character_last_known_location_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Last known location:"
+        style="@style/CharacterLabelStyle"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="@id/character_status_indicator"
+        app:layout_constraintTop_toBottomOf="@id/character_status_indicator" />
+
+    <TextView
+        android:id="@+id/character_last_known_location"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        style="@style/CharacterInfoTextStyle"
+        app:layout_constraintStart_toStartOf="@id/character_last_known_location_label"
+        app:layout_constraintTop_toBottomOf="@id/character_last_known_location_label"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+    <TextView
+        android:id="@+id/character_first_seen_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="First seen in:"
+        style="@style/CharacterLabelStyle"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="@id/character_last_known_location"
+        app:layout_constraintTop_toBottomOf="@id/character_last_known_location" />
+
+    <TextView
+        android:id="@+id/character_first_seen"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Episode"
+        style="@style/CharacterInfoTextStyle"
+        app:layout_constraintStart_toStartOf="@id/character_first_seen_label"
+        app:layout_constraintTop_toBottomOf="@id/character_first_seen_label"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -24,65 +24,74 @@ class MainActivity : AppCompatActivity()  {
     private lateinit var rvCharacterList: RecyclerView
     private lateinit var adapter: CharacterAdapter
     private var characterList = mutableListOf<Character>()
+    private var currentPage = 1
+    private var isFetching = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         //Bind TextView
-        // val tvNomePersonagens = findViewById<TextView>(R.id.tvNomePersonagens)
-        // tvNomePersonagens.text = "Novo texto..."
         rvCharacterList = findViewById(R.id.rvCharacterList)
         rvCharacterList.layoutManager = LinearLayoutManager(this)
-        //rvCharacterList.layoutManager = GridLayoutManager(this,2)
         adapter = CharacterAdapter(this, characterList)
         rvCharacterList.adapter = adapter
 
-
-
-
         checkConnectivity()
 
-        RickAndMortyRepository.instance.getAllCharacters().enqueue(object:
-            Callback<CharactersResponse> {
+        loadCharacters(currentPage)
+        recyclerViewScrollListener()
 
-            override fun onResponse(
-                call: Call<CharactersResponse>,
-                response: Response<CharactersResponse>
-            ) {
+    }
+
+    private fun loadCharacters(page: Int) {
+        Toast.makeText(this,"Baixando página ${page}", Toast.LENGTH_SHORT).show()
+        isFetching = true
+        RickAndMortyRepository.instance.getAllCharacters(page).enqueue(object : Callback<CharactersResponse> {
+            override fun onResponse(call: Call<CharactersResponse>, response: Response<CharactersResponse>) {
                 if (response.isSuccessful) {
-                    Log.d("rickandmorty", "Veio resposta OK")
-
                     response.body()?.let {
-                        Log.d("rickandmorty", "Count: ${it.info.count}")
-                        characterList.clear()
                         characterList.addAll(it.results)
                         runOnUiThread {
                             adapter.notifyDataSetChanged()
-                            Log.d("rickandmorty", "itemCount do Adapter: ${adapter.itemCount}")
                         }
+                        currentPage += 1
+                        isFetching = false
 
-                        var nomes = ""
-                        it.results.forEach { c ->
-                            // Log.d("rickandmorty", c.name)
-                            nomes += "${c.name}\n"
+                        val next = it.info.next
+                        if (next == null) {
+                            // This indicates there are no more pages to load
                         }
-
-                        Log.d("rickandmorty", nomes)
-                        // tvNomePersonagens.text = nomes
                     }
-                } else {
-                    Log.d("rickandmorty", "API Respondeu: ${response.code()}")
                 }
-
             }
 
             override fun onFailure(call: Call<CharactersResponse>, t: Throwable) {
-                t.message?.let { Log.d("rickandmorty", it) }
+                isFetching = false
+                Toast.makeText(this@MainActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
+    private fun recyclerViewScrollListener() {
+        rvCharacterList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val totalItemCount = layoutManager.itemCount
+                val visibleItemCount = layoutManager.childCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                if (!isFetching) {
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                        && firstVisibleItemPosition >= 0
+                    ) {
+                        loadCharacters(currentPage)
+                    }
+                }
+            }
+        })
+    }
     private fun checkConnectivity() {
         val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkRequest = NetworkRequest.Builder()

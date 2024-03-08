@@ -15,13 +15,16 @@ class CharacterAdapter(private val context: Context
 
     class CharacterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textViewName: TextView = view.findViewById(R.id.character_name)
-        val textViewId: TextView = view.findViewById(R.id.character_id)
+        // val textViewId: TextView = view.findViewById(R.id.character_id)
         val imageViewCharacter: ImageView = view.findViewById(R.id.character_image)
-        //Adicionar os outros elementos, conforme character_item.xml
+        val statusIndicatorView: View = view.findViewById(R.id.character_status_indicator)
+        val textViewStatus: TextView = view.findViewById(R.id.character_status_and_species)
+        val textViewLocation: TextView = view.findViewById(R.id.character_last_known_location)
+        val textViewFirstSeen: TextView = view.findViewById(R.id.character_first_seen)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterViewHolder {
-        val viewItem = LayoutInflater.from(parent.context).inflate(R.layout.character_item, parent, false)
+        val viewItem = LayoutInflater.from(parent.context).inflate(R.layout.character_item2, parent, false)
         return CharacterViewHolder(viewItem)
     }
 
@@ -30,8 +33,19 @@ class CharacterAdapter(private val context: Context
     override fun onBindViewHolder(holder: CharacterViewHolder, position: Int) {
         val character = characterList[position]
         holder.textViewName.text = character.name
-        holder.textViewId.text = "#${character.id}"
-        // incorreto -> holder.imageViewCharacter.image = character.image
+        // holder.textViewId.text = "#${character.id}"
         Glide.with(context).load(character.image).into(holder.imageViewCharacter);
+        holder.textViewStatus.text = "${character.status} - ${character.species}"
+        val statusColor = when (character.status) {
+            "Alive" -> R.drawable.status_alive
+            "Dead" -> R.drawable.status_dead
+            else -> R.drawable.status_unknown
+        }
+        holder.statusIndicatorView.setBackgroundResource(
+            statusColor
+        )
+        holder.textViewLocation.text = character.location.name
+        val episodeNum = character.episode[0].substringAfterLast("/")
+        holder.textViewFirstSeen.text = "Episode #${episodeNum}"
     }
 }
