@@ -1,5 +1,6 @@
 package com.oceanbrasil.rickandmortyapp.api
 
+import com.oceanbrasil.rickandmortyapp.domain.Episode
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

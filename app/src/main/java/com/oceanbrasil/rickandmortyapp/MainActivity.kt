@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.oceanbrasil.rickandmortyapp.api.EpisodeRepository
 import com.oceanbrasil.rickandmortyapp.api.RickAndMortyRepository
 import com.oceanbrasil.rickandmortyapp.domain.Character
 import com.oceanbrasil.rickandmortyapp.domain.CharactersResponse
@@ -26,6 +27,8 @@ class MainActivity : AppCompatActivity()  {
     private var characterList = mutableListOf<Character>()
     private var currentPage = 1
     private var isFetching = false
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +45,8 @@ class MainActivity : AppCompatActivity()  {
         loadCharacters(currentPage)
         recyclerViewScrollListener()
 
+
+
     }
 
     private fun loadCharacters(page: Int) {
@@ -52,16 +57,20 @@ class MainActivity : AppCompatActivity()  {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         characterList.addAll(it.results)
+                        if (page == 1) {
+                            val rickIndex = 0
+                            EpisodeRepository.loadAllEpisodes(characterList[rickIndex].episode.last()) {
+                                runOnUiThread {
+                                    adapter.notifyDataSetChanged()
+                                }
+                            }
+                        }
                         runOnUiThread {
                             adapter.notifyDataSetChanged()
                         }
                         currentPage += 1
                         isFetching = false
 
-                        val next = it.info.next
-                        if (next == null) {
-                            // This indicates there are no more pages to load
-                        }
                     }
                 }
             }

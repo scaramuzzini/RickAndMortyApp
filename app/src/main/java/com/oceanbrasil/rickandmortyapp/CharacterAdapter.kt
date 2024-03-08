@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.oceanbrasil.rickandmortyapp.api.EpisodeRepository
 import com.oceanbrasil.rickandmortyapp.domain.Character
 
 class CharacterAdapter(private val context: Context
@@ -45,7 +46,9 @@ class CharacterAdapter(private val context: Context
             statusColor
         )
         holder.textViewLocation.text = character.location.name
-        val episodeNum = character.episode[0].substringAfterLast("/")
-        holder.textViewFirstSeen.text = "Episode #${episodeNum}"
+        val episodeNum = character.episode[0].substringAfterLast("/").toInt()
+        // holder.textViewFirstSeen.text = "Episode #${episodeNum}"
+
+        holder.textViewFirstSeen.text = EpisodeRepository.getEpisode(episodeNum)?.name
     }
 }
